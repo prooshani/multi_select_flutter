@@ -198,8 +198,9 @@ class _MultiSelectDialogState<V> extends State<MultiSelectDialog<V>> {
       title: widget.searchable == false
           ? widget.title ?? Text("Select")
           : Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Column(
+                //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   _showSearch
                       ? Expanded(
@@ -242,6 +243,7 @@ class _MultiSelectDialogState<V> extends State<MultiSelectDialog<V>> {
           : EdgeInsets.all(20),
       content: Container(
         height: widget.height,
+        alignment: Alignment.centerRight,
 
         ///width: MediaQuery.of(context).size.width * 0.72,
         width: widget.width,
