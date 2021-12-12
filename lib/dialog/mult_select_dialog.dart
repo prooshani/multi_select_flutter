@@ -202,14 +202,16 @@ class _MultiSelectDialogState<V> extends State<MultiSelectDialog<V>> {
           ? widget.title ?? Text("Select")
           : Container(
               child: Column(
-                children: [
+                //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[
                   widget.title ?? Text("Select"),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
+                    children: [
                       _showSearch
                           ? Expanded(
+                              flex: 1,
                               child: Container(
                                 constraints: BoxConstraints(minHeight: 50, minWidth: 50, maxWidth: 200, maxHeight: 60),
                                 padding: EdgeInsets.only(left: 10),
@@ -217,6 +219,7 @@ class _MultiSelectDialogState<V> extends State<MultiSelectDialog<V>> {
                                   textDirection: TextDirection.rtl,
                                   style: widget.searchTextStyle,
                                   decoration: InputDecoration(
+                                    hintTextDirection: TextDirection.rtl,
                                     hintStyle: widget.searchHintStyle,
                                     hintText: widget.searchHint ?? "Search",
                                     focusedBorder: UnderlineInputBorder(
@@ -244,7 +247,7 @@ class _MultiSelectDialogState<V> extends State<MultiSelectDialog<V>> {
                         },
                       ),
                     ],
-                  ),
+                  )
                 ],
               ),
             ),
@@ -256,6 +259,7 @@ class _MultiSelectDialogState<V> extends State<MultiSelectDialog<V>> {
 
         ///width: MediaQuery.of(context).size.width * 0.72,
         width: widget.width,
+        alignment: Alignment.centerRight,
         child: widget.listType == null || widget.listType == MultiSelectListType.LIST
             ? ListView.builder(
                 itemCount: _items.length,
