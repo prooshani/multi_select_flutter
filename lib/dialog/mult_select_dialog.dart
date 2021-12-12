@@ -126,23 +126,26 @@ class _MultiSelectDialogState<V> extends State<MultiSelectDialog<V>> {
         unselectedWidgetColor: widget.unselectedColor ?? Colors.black54,
         accentColor: widget.selectedColor ?? Theme.of(context).primaryColor,
       ),
-      child: CheckboxListTile(
-        checkColor: widget.checkColor,
-        value: _selectedValues.contains(item.value),
-        activeColor: widget.colorator != null ? widget.colorator!(item.value) ?? widget.selectedColor : widget.selectedColor,
-        title: Text(
-          item.label,
-          style: _selectedValues.contains(item.value) ? widget.selectedItemsTextStyle : widget.itemsTextStyle,
+      child: Directionality(
+        textDirection: TextDirection.rtl,
+        child: CheckboxListTile(
+          checkColor: widget.checkColor,
+          value: _selectedValues.contains(item.value),
+          activeColor: widget.colorator != null ? widget.colorator!(item.value) ?? widget.selectedColor : widget.selectedColor,
+          title: Text(
+            item.label,
+            style: _selectedValues.contains(item.value) ? widget.selectedItemsTextStyle : widget.itemsTextStyle,
+          ),
+          controlAffinity: ListTileControlAffinity.trailing,
+          onChanged: (checked) {
+            setState(() {
+              _selectedValues = widget.onItemCheckedChange(_selectedValues, item.value, checked!);
+            });
+            if (widget.onSelectionChanged != null) {
+              widget.onSelectionChanged!(_selectedValues);
+            }
+          },
         ),
-        controlAffinity: ListTileControlAffinity.leading,
-        onChanged: (checked) {
-          setState(() {
-            _selectedValues = widget.onItemCheckedChange(_selectedValues, item.value, checked!);
-          });
-          if (widget.onSelectionChanged != null) {
-            widget.onSelectionChanged!(_selectedValues);
-          }
-        },
       ),
     );
   }
@@ -199,41 +202,48 @@ class _MultiSelectDialogState<V> extends State<MultiSelectDialog<V>> {
           ? widget.title ?? Text("Select")
           : Container(
               child: Column(
-                //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  _showSearch
-                      ? Expanded(
-                          child: Container(
-                            padding: EdgeInsets.only(left: 10),
-                            child: TextField(
-                              style: widget.searchTextStyle,
-                              decoration: InputDecoration(
-                                hintStyle: widget.searchHintStyle,
-                                hintText: widget.searchHint ?? "Search",
-                                focusedBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: widget.selectedColor ?? Theme.of(context).primaryColor,
+                children: [
+                  widget.title ?? Text("Select"),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      _showSearch
+                          ? Expanded(
+                              child: Container(
+                                constraints: BoxConstraints(minHeight: 50, minWidth: 50, maxWidth: 200, maxHeight: 60),
+                                padding: EdgeInsets.only(left: 10),
+                                child: TextField(
+                                  textDirection: TextDirection.rtl,
+                                  style: widget.searchTextStyle,
+                                  decoration: InputDecoration(
+                                    hintStyle: widget.searchHintStyle,
+                                    hintText: widget.searchHint ?? "Search",
+                                    focusedBorder: UnderlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: widget.selectedColor ?? Theme.of(context).primaryColor,
+                                      ),
+                                    ),
                                   ),
+                                  onChanged: (val) {
+                                    setState(() {
+                                      _items = widget.updateSearchQuery(val, widget.items);
+                                    });
+                                  },
                                 ),
                               ),
-                              onChanged: (val) {
-                                setState(() {
-                                  _items = widget.updateSearchQuery(val, widget.items);
-                                });
-                              },
-                            ),
-                          ),
-                        )
-                      : widget.title ?? Text("Select"),
-                  IconButton(
-                    icon: _showSearch ? widget.closeSearchIcon ?? Icon(Icons.close) : widget.searchIcon ?? Icon(Icons.search),
-                    onPressed: () {
-                      setState(() {
-                        _showSearch = !_showSearch;
-                        if (!_showSearch) _items = widget.items;
-                      });
-                    },
+                            )
+                          : Container(),
+                      IconButton(
+                        icon: _showSearch ? widget.closeSearchIcon ?? Icon(Icons.close) : widget.searchIcon ?? Icon(Icons.search),
+                        onPressed: () {
+                          setState(() {
+                            _showSearch = !_showSearch;
+                            if (!_showSearch) _items = widget.items;
+                          });
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -243,7 +253,6 @@ class _MultiSelectDialogState<V> extends State<MultiSelectDialog<V>> {
           : EdgeInsets.all(20),
       content: Container(
         height: widget.height,
-        alignment: Alignment.centerRight,
 
         ///width: MediaQuery.of(context).size.width * 0.72,
         width: widget.width,
