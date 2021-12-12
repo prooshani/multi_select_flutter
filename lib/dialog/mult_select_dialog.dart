@@ -136,7 +136,7 @@ class _MultiSelectDialogState<V> extends State<MultiSelectDialog<V>> {
             item.label,
             style: _selectedValues.contains(item.value) ? widget.selectedItemsTextStyle : widget.itemsTextStyle,
           ),
-          controlAffinity: ListTileControlAffinity.trailing,
+          controlAffinity: ListTileControlAffinity.leading,
           onChanged: (checked) {
             setState(() {
               _selectedValues = widget.onItemCheckedChange(_selectedValues, item.value, checked!);
